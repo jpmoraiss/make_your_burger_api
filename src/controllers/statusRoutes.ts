@@ -22,7 +22,7 @@ export async function statusRoutes(app: FastifyInstance) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         reply.status(400);
-        return { error };
+        return error.issues;
       }
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -52,7 +52,7 @@ export async function statusRoutes(app: FastifyInstance) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         reply.status(400);
-        return { error };
+        return error.issues;
       }
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
