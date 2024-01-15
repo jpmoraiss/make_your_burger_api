@@ -69,4 +69,41 @@ export async function orderRoutes(app: FastifyInstance) {
 
     return orders;
   });
+
+  app.patch('/order/update-status/:id', async (request, reply) => {
+    const paramsSchema = z.object({
+      id: z.string().uuid(),
+    });
+
+    const bodySchema = z.object({
+      status: z.string(),
+    });
+
+    try {
+      const { id } = paramsSchema.parse(request.params);
+      const { status } = bodySchema.parse(request.body);
+
+      const order = await prisma.order.update({
+        where: {
+          id,
+        },
+        data: {
+          status,
+        },
+      });
+
+      return order;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        reply.status(400);
+        return error.issues;
+      }
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code && error.code === 'P2025') {
+          reply.status(404);
+          return { error: 'Order not found.' };
+        }
+      }
+    }
+  });
 }
