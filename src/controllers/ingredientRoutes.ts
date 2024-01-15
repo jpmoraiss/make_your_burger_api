@@ -44,8 +44,6 @@ export async function ingredientRoutes(app: FastifyInstance) {
     try {
       const { id } = bodySchema.parse(request.params);
 
-      console.log(id);
-
       const removedIngredient = await prisma.ingredient.delete({
         where: {
           id,
